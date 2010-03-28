@@ -111,27 +111,37 @@ a {
 	text-decoration: none;
 	/*color: #002bb8;*/
 	background: none;
-	color: black ! important;
+	color: black;
 }
 a:visited {
-	color: #5a3696;
+	/*color: #5a3696;*/
+	color: black;
 }
 a:active {
-	color: #faa700;
+	/*color: #faa700;*/
+	color: black;
 }
 a:hover {
 	text-decoration: underline;
 }
 a.stub {
-	color: #772233;
+	text-decoration: none;
+	/*color: #772233;*/
+	color: black  ! important;
 }
 a.new, #p-personal a.new {
-	color: #ba0000;
+	text-decoration: none;
+	/*color: #ba0000;*/
+	color: black  ! important;
 }
 a.new:visited, #p-personal a.new:visited {
-	color: #a55858;
+	text-decoration: none;
+	/*color: #a55858;*/
+	color: black  ! important;
 }
-
+a.metalinks{
+	color: #002bb8 ! important;
+}
 img {
 	border: none;
 	vertical-align: middle;

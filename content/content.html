@@ -6,6 +6,7 @@
 <style type="text/css">
 body {
 	background: #ffffff url('css/images/Wiki.png') no-repeat fixed left;
+	background-position:left top;
 	}
 .right {
    margin-top: 150px;
@@ -13,7 +14,19 @@ body {
    margin-right: 100px;
    
 }
-.menuitem{
+.header {
+   position:absolute;
+   bottom:50px;
+   height:25px;   /* Height of the footer */
+   align:right;
+}
+
+.footer {
+   position:absolute;
+   bottom:0px;
+   height:25px;   /* Height of the footer */
+}
+.rightmenuitem{
 	background-color: #44AA00;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -22,17 +35,29 @@ body {
 	height: 20px;
 	margin-bottom: 10px;
 }
-a:link{
+.topmenuitem{
+	background-color: #44AA00;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border: 1px solid #000;
+	padding: 5px;
+	height: 20px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	float:left;
+}
+
+a.menu:link{
 	font-size:100%;
 	color:#ffffff;
 	text-decoration: none;
 }	
-a:visited{
+a.menu:visited{
 	font-size:100%;
 	color:#ffffff;
 	text-decoration: none;
 }	
-a:hover {
+a.menu:hover {
 	font-size:100%;
 	color:red;
 	
@@ -41,20 +66,34 @@ a:hover {
 </style>
 </head>
 <body>
-<div id="menu" class="right">
-<div class="menuitem" >
-	<a href="aboutwiki.html"><b>വിക്കിപീഡിയയ്ക്കു് ഒരാമുഖം</a></b>
+<div id="menu" class="header">
+	<div class="topmenuitem" >
+	<a class="menu" href="wiki-wikipedia-mlwikipedia.html"><b>വിക്കിപീഡിയയ്ക്കു് ഒരാമുഖം</a></b>
 </div>
-<div class="menuitem" >
-	<a href="about.html"><b>ഈ പതിപ്പിനെപ്പറ്റി</a></b>
+<div class="topmenuitem" >
+	<a class="menu"  href="aboutmlwikicd.html"><b>ഈ പതിപ്പിനെപ്പറ്റി</a></b>
 </div>
-<div class="menuitem" >
-	<a href="license.html"><b>പകര്‍പ്പവകാശം</a></b>
-</div>
-<div class="menuitem" >
-	<a href="http://ml.wikipedia.org"><b>മലയാളം വിക്കിപീഡിയ</a></b>
+<div class="topmenuitem" >
+	<a class="menu"  href="credits.html"><b>അണിയറയില്‍</a></b>
 </div>
 
+</div>
+
+<div id="menu" class="right">
+<div class="rightmenuitem" >
+	<a class="menu" href="wiki-wikipedia-mlwikipedia.html"><b>വിക്കിപീഡിയയ്ക്കു് ഒരാമുഖം</a></b>
+</div>
+<div class="rightmenuitem" >
+	<a class="menu"  href="aboutmlwikicd.html"><b>ഈ പതിപ്പിനെപ്പറ്റി</a></b>
+</div>
+<div class="rightmenuitem" >
+	<a class="menu"  href="http://ml.wikipedia.org"><b>മലയാളം വിക്കിപീഡിയ</a></b>
+</div>
+</div>
+<div id="menu" class="footer">
+	<a href="license.html"><b>പകര്‍പ്പവകാശം</a></b>
+	<a href="disclaimer.html"><b>ബാദ്ധ്യതാ നിരാകരണം</a>
+</div>
 </body>
 
 </html>

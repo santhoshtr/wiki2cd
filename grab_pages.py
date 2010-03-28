@@ -80,10 +80,9 @@ def maketoc(topicslist,toc_filename):
 	<form action="" onsubmit="return false;">
 	<input type="text" value="" id="topicsearch"/>
 	<input type="button" id="searchbox" value="Go" name="പോകൂ" onclick="lookupLocal();"/>
-	<p>
-	മലയാളത്തില്‍ എഴുതാന്‍ Ctrl+m അമര്‍ത്തുക.<a href="swanalekha.html" title="സഹായം">?</a>
-	</p>
 	</form>
+	<br/>
+	<hr/>
 	<h2>ഉള്ളടക്കം</h2>
 	  <ul id="example" class="filetree">
 	"""
@@ -128,7 +127,7 @@ def maketoc(topicslist,toc_filename):
 				matchSubset:1,
 				onItemSelect:selectItem,
 				onFindValue:findValue,
-				autoFill:true,
+				autoFill:false,
 				maxItemsToShow:10
 			}
 		);
@@ -139,21 +138,40 @@ def maketoc(topicslist,toc_filename):
 	"""
 	toc_file.write(toc_header)
 	index = 0
+	currentlevel = 0
+	previouslevel = -1
+	atleaf = False
 	while 1:
 		text = unicode(fp.readline())
 		text= text.strip()
 		if text.strip() == "": 
 			break
-		if text[0]=="=" and text[1]=="=":
+		if text.count("=") > 0:
+			currentlevel =  text.count("=")
 			text = text.replace("=","")
-			link = text.strip().replace(" ", "_") 
-			if index == 1 :
-				toc_file.write("</li>\n")
+			leveldiff = previouslevel-currentlevel
+			if leveldiff == 0:
+				leveldiff = 1
+			if atleaf:
+				leveldiff =currentlevel-1		
+			if atleaf and previouslevel-currentlevel == 0:
+				leveldiff = 1		
+			if previouslevel-currentlevel > 0:
+				leveldiff = -1				
+			if atleaf and previouslevel-currentlevel > 0:
+				leveldiff = -1				
+			if atleaf and previouslevel-currentlevel < 0:
+				leveldiff = 2					
+			#print previouslevel , " > " , currentlevel , " : ",	leveldiff ,atleaf
+			for i in range(0,leveldiff):
 				toc_file.write("</ul>\n")
-			index =1	
+				toc_file.write("</li>\n")
 			toc_file.write("<li class='closed'><span class='folder'>"+text+"</span>\n")
 			toc_file.write("<ul>\n")
+			previouslevel = currentlevel
+			atleaf = False	
 			continue
+		atleaf = True
 		link = text.strip().replace(" ", "_")
 		toc_file.write("<li><span class='file'><a href='"+link+".html' target='content'>"+text+"</a></span></li>\n")
 	toc_file.write(toc_footer+"\n")
@@ -180,6 +198,13 @@ def grab_pages(wikibase, topicslist,outputfolder):
 			return 
 
 def grab_page(wikibase, pagelink,outputfolder):
+	metacontent ="""
+	<hr/>
+	<ul>
+	<li><a href="$ONWIKI$" target="_blank" class="metalinks">ഈ ലേഖനത്തിന്റെ ഏറ്റവും പുതിയ പതിപ്പു് മലയാളം വിക്കിപീഡിയയില്‍ വായിക്കുക</a></li>
+	<li><a href="http://toolserver.org/~daniel/WikiSense/Contributors.php?wikilang=ml&wikifam=.wikipedia.org&since=&until=&grouped=on&order=-edit_count&max=100&order=-edit_count&format=html&page=$PAGE$" target="_blank"  class="metalinks">ഈ ലേഖനത്തിന്റെ രചനയില്‍ പങ്കെടുത്തവര്‍</a></li>
+	<ul>
+	"""
 	try:
 		link= pagelink.strip()
 		parts = link.split("/")	
@@ -188,8 +213,8 @@ def grab_page(wikibase, pagelink,outputfolder):
 		if os.path.isfile(outputfolder + "/"+ filename+  ".html"):
 			print "File " + outputfolder + "/"+ filename+  ".html" + " already exists"
 			return
-		link = urllib.quote(filename.encode('utf-8')) 
-		link = wikibase +"/wiki/"+link
+		quotedfilename = urllib.quote(filename.encode('utf-8')) 
+		link = wikibase +"/wiki/"+quotedfilename
 		opener = urllib2.build_opener()
 		opener.addheaders = [('User-agent', 'Mozilla/5.0')]
 		infile = opener.open(link)
@@ -198,6 +223,9 @@ def grab_page(wikibase, pagelink,outputfolder):
 		parser.feed(page)        
 		parser.close()
 		f= open(outputfolder + "/"+ filename+  ".html",'w')
+		metacontent = metacontent.replace("$ONWIKI$",link)
+		metacontent = metacontent.replace("$PAGE$",quotedfilename)
+		page = page.replace("</body></html>",metacontent+"</body></html>")
 		f.write(page)
 		f.close()
 		for image in parser.images: 
@@ -205,9 +233,9 @@ def grab_page(wikibase, pagelink,outputfolder):
 				grab_image(image,outputfolder)
 		
 	except KeyboardInterrupt:
-		return 
+		sys.exit()
 	except urllib2.HTTPError:
-		print("Error: Cound not download the page")
+		print("Error: Could not download the page")
 		pass
 
 def grab_image(imageurl,outputfolder):

@@ -1,5 +1,5 @@
 #!/bin/bash
-outputfolder="../out20100325"
+outputfolder="../wiki"
 baseurl="http://ml.wikipedia.org"
 topics="topicslist.txt"
 #--------------------------------------------------------

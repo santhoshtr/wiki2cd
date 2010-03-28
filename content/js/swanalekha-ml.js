@@ -2200,7 +2200,6 @@ function disable(){
 widget.style.background='white';
 widget.onkeypress=keypressDisabled;
 widget.style.outline = null;
-
 };
 function checkBoxListener(){
 	if(widget.aBound){
@@ -2221,7 +2220,6 @@ function keypressEnabled(event){
 		document.getElementById("toggle").checked = false;
 		return;
 	}
-	getWidgetSelectionStart(widget);
 	kCode = event.keyCode || event.which; 
  
 	if ( kCode  == 8) {
@@ -2292,9 +2290,7 @@ function keypressEnabled(event){
 	}
 	if(mal){
 		var scrollTop = widget.scrollTop;
-		
 		var cursorLoc =  widget.selectionStart;var stepback=cursorLoc-patternStart;
-	//	alert(widget.selectionStart+":"+widget.selectionEnd+":"+scrollTop);
 		widget.value=  widget.value.substr(0,patternStart)+mal+widget.value.substr(widget.selectionEnd,widget.value.length); 
 		widget.scrollTop=scrollTop ;
 		widget.selectionStart = cursorLoc + mal.length  - stepback  ;
@@ -2309,7 +2305,6 @@ function keypressEnabled(event){
 function keypressDisabled(event){
 if(isToggleEvent(event)){
 enable();
-if(document.getElementById("toggle")!=null)
 document.getElementById("toggle").checked = true;
 return false;
 }
@@ -2318,7 +2313,6 @@ return true;
 widget.aBound=false;
 disable();
 var checkbox = document.getElementById("toggle");
-if(checkbox!=null)
 if (checkbox.addEventListener) 
                 checkbox.addEventListener("click", checkBoxListener,false);
 else if (checkbox.attachEvent) 
@@ -2328,51 +2322,21 @@ else if (checkbox.attachEvent)
             if(textBox==null) return;
             try
             {
-			var searchBox= document.getElementById("searchInput");
-            var element = document.createElement("input");
-            element.setAttribute("type","checkbox");
-            element.setAttribute("id","toggle");
-            var labelcheckBox = document.createTextNode(' Transliterate - Use Ctrl + M to Toggle.');
-            textBox.parentNode.insertBefore(element,textBox);
-            if(searchBox) searchBox.parentNode.insertBefore(element,searchBox);
-           /*  textBox.insertBefore(element,textBox);*/
-            document.getElementById("toggle").checked = textBox.aBound;
-            textBox.parentNode.insertBefore(labelcheckBox,textBox);
-           if(searchBox)  searchBox.parentNode.insertBefore(labelcheckBox,searchBox);
-            var p = document.createElement("p");
-            p.setAttribute("style","width:100%;height:1px;");
-            textBox.parentNode.insertBefore(p,textBox);
-            if(searchBox) searchBox.parentNode.insertBefore(p,searchBox);
+	        var p = document.createElement("p");
+            p.setAttribute("style","width:100%;height:1px;margin-top:0em;");
+            p.innerHTML = '<input type="checkbox" id="toggle">മലയാളത്തില്‍ എഴുതാന്‍ Ctrl+m അമര്‍ത്തുക.<a href="swanalekha.html" title="സഹായം">?</a>';
+            textBox.parentNode.appendChild(p);
              }
              catch(ex)
              {
               alert(ex);
              }
 }
-function bindAllTextElements() {
-	
-	var ta=document.getElementsByTagName('textarea');
- 
-	for(var i=0;i < ta.length;++i){
-		addCheckbox(ta[i]);
-		bindSwanalekha(ta[i]);
-	}
-	var tb=document.getElementsByTagName('input');
-	for(var i=0;i < tb.length;++i){	
-	 type = tb[i].getAttribute('type'); 	
-		if ( type == 'text' || type == null) { 
-			//addCheckbox(ta[i]);
-			bindSwanalekha(tb[i]);
-		}
-	}	
-	
-	var ifs = document.getElementsByTagName('iframe');	
-    var len=ifs.length;
-	for (var i=0;i < len; i++) {		
-		bindAllTextElements(ifs[i].contentDocument.documentElement);
-	}
-	
- };
+function bindSearchBox() {
+	var tb=document.getElementById('topicsearch');
+	addCheckbox(tb);
+	bindSwanalekha(tb);
+}
 function addLoadEvent(func) {
 	 
             if (window.addEventListener) {
@@ -2381,22 +2345,7 @@ function addLoadEvent(func) {
             else if (window.attachEvent) {
             	window.attachEvent("onload", func);
 			}
+			
 }
- 
- function getWidgetSelectionStart (widget) {
-	 if( document.selection ){
-	// The current selection
-	var range = document.selection.createRange();
-	// We'll use this as a 'dummy'
-	var stored_range = range.duplicate();
-	// Select all text
-	stored_range.moveToElementText( widget );
-	// Now move 'dummy' end point to end point of original range
-	stored_range.setEndPoint( 'EndToEnd', range );
-	// Now we can calculate start and end points
-	widget.selectionStart = stored_range.text.length - range.text.length;
-	widget.selectionEnd = widget.selectionStart + range.text.length;
-}
- }
-addLoadEvent(bindAllTextElements);
+addLoadEvent(bindSearchBox);
 /************ Swanalekha code ends here **********************/
