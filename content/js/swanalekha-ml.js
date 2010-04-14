@@ -1,14 +1,12 @@
- /************ Swanalekha code ends here **********************/
+﻿ /************ Swanalekha code ends here **********************/
 var pattern=null;
 var tabCount=1;
 function bindSwanalekha(widget){
-
 if(widget.aBound){ 
 widget.aBound=false;
 disable();
 return;  
 }
-
 var A={
 a:'അ',
 a2:'ആ',
@@ -2191,6 +2189,10 @@ function isToggleEvent(event){
   kCode = event.keyCode || event.which; 
   return   ((event.keyCode == 13 && event.ctrlKey) || (event.which == 109 && event.ctrlKey));
 };
+function isExplorer() {
+  return (document.selection != undefined && document.selection.createRange().isEqual != undefined);
+}
+
 function enable(){
 /*widget.style.background='#eef';*/
 widget.onkeypress=keypressEnabled;
@@ -2200,6 +2202,7 @@ function disable(){
 widget.style.background='white';
 widget.onkeypress=keypressDisabled;
 widget.style.outline = null;
+
 };
 function checkBoxListener(){
 	if(widget.aBound){
@@ -2221,8 +2224,7 @@ function keypressEnabled(event){
 		return;
 	}
 	kCode = event.keyCode || event.which; 
- 
-	if ( kCode  == 8) {
+ 	if ( kCode  == 8) {
 		if(pattern.indexOf('a')>=0 || pattern.indexOf('A')>=0 || pattern.indexOf('e')>=0 || pattern.indexOf('E')>=0 || pattern.indexOf('i')>=0 || pattern.indexOf('I')>=0 || pattern.indexOf('o')>=0 || pattern.indexOf('O')>=0 || pattern.indexOf('u')>=0 || pattern.indexOf('U')>=0|| pattern.indexOf('1')>=0 || pattern.indexOf('2')>=0 || pattern.indexOf('3')>=0 || pattern.indexOf('4')>=0 || pattern.indexOf('5')>=0 || pattern.indexOf('6')>=0 || pattern.indexOf('7')>=0 || pattern.indexOf('8')>=0 || pattern.indexOf('9')>=0  ){
 			pattern=pattern.replace('a','');
 			pattern=pattern.replace('a',''); 
@@ -2257,6 +2259,9 @@ function keypressEnabled(event){
 	}
 	var char=String.fromCharCode(kCode );
 	var pos=widget.selectionStart;
+	var stepback=0;
+	
+	if(pattern!=null && A[pattern]){stepback = A[pattern].length;}
 	if( kCode ==9){ /*Tab key*/
 		tabCount++;
 		if(pattern!=null || pattern!=''){
@@ -2287,14 +2292,25 @@ function keypressEnabled(event){
 		tabCount=1;
 		patternStart=widget.selectionStart;
 		var mal=A[pattern];
+		stepback=0;
 	}
 	if(mal){
+	    if (isExplorer()) {
+		var range = document.selection.createRange();
+		range.moveStart("character", -stepback);
+		range.text = mal;
+		range.collapse(false);
+		range.select();
+	    }
+	    else{
 		var scrollTop = widget.scrollTop;
-		var cursorLoc =  widget.selectionStart;var stepback=cursorLoc-patternStart;
+		var cursorLoc =  widget.selectionStart;
+		var stepback = cursorLoc-patternStart; 
 		widget.value=  widget.value.substr(0,patternStart)+mal+widget.value.substr(widget.selectionEnd,widget.value.length); 
 		widget.scrollTop=scrollTop ;
 		widget.selectionStart = cursorLoc + mal.length  - stepback  ;
 		widget.selectionEnd = cursorLoc + mal.length - stepback;
+	    }	
 		return false;
 	}
 	if( kCode ==9){
@@ -2322,10 +2338,11 @@ else if (checkbox.attachEvent)
             if(textBox==null) return;
             try
             {
-	        var p = document.createElement("p");
+            var p = document.createElement("p");
             p.setAttribute("style","width:100%;height:1px;margin-top:0em;");
-            p.innerHTML = '<input type="checkbox" id="toggle">മലയാളത്തില്‍ എഴുതാന്‍ Ctrl+m അമര്‍ത്തുക.<a href="swanalekha.html" title="സഹായം">?</a>';
+            p.innerHTML = '<input type="checkbox" id="toggle">മലയാളത്തില്‍ എഴുതാന്‍ Ctrl+m അമര്‍ത്തുക.<a href="tools/swanalekha.html"  target="content" title="സഹായം">?</a>';
             textBox.parentNode.appendChild(p);
+
              }
              catch(ex)
              {
