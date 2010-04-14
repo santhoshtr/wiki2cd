@@ -10,6 +10,8 @@ mkdir $outputfolder
 cp -rf content  $outputfolder
 cp index.html $outputfolder
 echo "Retrieving the pages..."
+rm imagenamefix.sh
+rm toc_cd_fix.sh
 LANG=en_US.UTF8  python wiki2cd.py $baseurl  $topics $outputfolder/content
 echo "Fixing the links"
 mv $outputfolder/content/bits.wikimedia.org $outputfolder/content/bits

@@ -75,7 +75,13 @@ def maketoc(topicslist,outputfolder, toc_filename):
 
 		// otherwise, let's just display the value in the text box
 		else var sValue = li.selectValue;
-		parent.content.location.href = sValue.replace(/\ /g , "_") +".html";
+		var targetlink="#"
+		$("a").each(function() { 
+			if(sValue==$(this).html()){
+				targetlink=this.href;
+			}	
+		});
+		parent.content.location.href = targetlink;
 	}
 
 	function selectItem(li) {
@@ -168,6 +174,7 @@ def ensure_dir(f):
 
 def grab_pages(wikibase, topicslist,outputfolder):
 	fp = codecs.open(topicslist, "r", "utf-8")
+	pagenum =1 
 	while 1:
 		try:	
 			text = unicode(fp.readline())
@@ -177,12 +184,13 @@ def grab_pages(wikibase, topicslist,outputfolder):
 			if text[0]== "=": 
 				continue
 			link = text.replace(" ", "_")
-			grab_page(wikibase, wikibase + "/wiki/"+link,outputfolder)
+			grab_page(wikibase, wikibase + "/wiki/"+link,outputfolder, pagenum)
+			pagenum+=1
 		except KeyboardInterrupt:
 			return 
 
-def grab_page(wikibase, pagelink,outputfolder):
-	counter = 1000
+def grab_page(wikibase, pagelink,outputfolder, pagenum):
+	counter = 1000*pagenum
 	metacontent ="""
 	<hr/>
 	<ul>
@@ -190,9 +198,9 @@ def grab_page(wikibase, pagelink,outputfolder):
 	<li><a href="http://toolserver.org/~daniel/WikiSense/Contributors.php?wikilang=ml&wikifam=.wikipedia.org&since=&until=&grouped=on&order=-edit_count&max=100&order=-edit_count&format=html&page=$PAGE$" target="_blank"  class="metalinks">Contributors</a></li>
 	<ul>
 	"""
-	path = outputfolder
-	imageoutputfolder = "/wikiimages/"
-	imagenamefixscript = codecs.open("imagenamefix.sh", "w", "utf-8")
+	path = outputfolder+"/"
+	imageoutputfolder = "wikiimages/"
+	imagenamefixscript = codecs.open("imagenamefix.sh", "a", "utf-8")
 	imagenamefixscript.write("mkdir " +path+ imageoutputfolder +"\n")
 	try:
 		link= pagelink.strip()
@@ -229,11 +237,13 @@ def grab_page(wikibase, pagelink,outputfolder):
 				imagefile = imagefile.strip().replace("(", "\(")
 				imagefile = imagefile.strip().replace(")", "\)")
 				imagefile = imagefile.strip().replace(" ", "\ ")
+				imagefile = imagefile.strip().replace("%2C", ",")
+				imagefile = imagefile.strip().replace("%27", "'")
 				outputfile= outputfile.strip().replace("/", "\/")
 				try:
 					imagenamefixscript.write("cp " +  path+"\/"+ imagefile + "  " +path  +outputfile+"\n")
 					imagefile = imagefile.strip().replace("/", "\/")
-					imagenamefixscript.write("perl -e \"s/"+imagefile+"/"+outputfile+"/g\"  -pi "+htmlname+"\n" )
+					imagenamefixscript.write("perl -e \"s/"+imagefile+"/"+outputfile+"/g\"  -pi "+ htmlname+"\n" )
 				except:
 					#TODO : some encoding errors happen in above line. Fix it
 					pass
@@ -243,7 +253,7 @@ def grab_page(wikibase, pagelink,outputfolder):
 	except urllib2.HTTPError:
 		print("Error: Could not download the page")
 		pass
-
+	imagenamefixscript.close()
 def grab_image(imageurl,outputfolder):
 	try:
 		link= imageurl.strip()
