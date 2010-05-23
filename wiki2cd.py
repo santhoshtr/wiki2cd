@@ -22,6 +22,7 @@ import urllib
 import urllib2
 import os,sys
 from sgmllib import SGMLParser
+from pyquery import PyQuery as pq
 
 class ImageLister(SGMLParser):
     """
@@ -170,6 +171,7 @@ def grab_page(wikibase, pagelink,outputfolder, pagenum):
         metacontent = metacontent.replace("$ONWIKI$",link)
         metacontent = metacontent.replace("$PAGE$",quotedfilename)
         page = page.replace("</body>",metacontent+"</body>")
+        page = cleanup(page)
         f.write(page)
         f.close()
         for image in parser.images: 
@@ -180,6 +182,7 @@ def grab_page(wikibase, pagelink,outputfolder, pagenum):
                 link=link.replace("http://","")
                 imagefile= urllib.unquote(link) 
                 outputfile =imageoutputfolder+"/"+str(pagenum)+"_"+str(counter) + "."+ extension
+                #the following code need to be rewritten in a better way to handle the special characters in the links
                 imagefile = imagefile.strip().replace("(", "\(")
                 imagefile = imagefile.strip().replace(")", "\)")
                 imagefile = imagefile.strip().replace(" ", "\ ")
@@ -228,6 +231,24 @@ def grab_image(imageurl, outputfolder):
     except urllib2.HTTPError:
         print("Error: Cound not download the image")
         pass
+    
+def cleanup(page):
+    """
+    remove unwanted sections of the page.
+    Uses pyquery.
+    """
+    document = pq(page)
+    #If you want to remove any other section, just add the class or id of the section below with comma seperated
+    unwanted_sections_list="""
+    div#jump-to-nav, div.top, div#column-one, div#siteNotice, div#purl, div#head,div#footer, div#head-base, div#page-base, div#stub, div#noprint,
+    div#disambig,div.NavFrame,#colophon,.editsection,.toctoggle,.tochidden,.catlinks,.navbox,.sisterproject,.ambox,
+    .toccolours,.topicondiv#f-poweredbyico,div#f-copyrightico,div#featured-star,li#f-viewcount,
+    li#f-about,li#f-disclaimer,li#f-privacy,.portal
+    """
+    unwanted_divs = unwanted_sections_list.split(",")
+    for section in unwanted_divs:
+        document.remove(section.strip())
+    return document.html().encode("utf-8")
     
 if __name__ == '__main__':
     if len(sys.argv)> 2:
