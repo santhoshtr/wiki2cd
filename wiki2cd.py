@@ -180,22 +180,14 @@ def grab_page(wikibase, pagelink,outputfolder, pagenum):
                 extension=image.split(".")[-1]
                 link= image.strip()
                 link=link.replace("http://","")
-                imagefile= urllib.unquote(link) 
+                #imagefile= urllib.unquote(link) 
+                imagefile= link 
                 outputfile =imageoutputfolder+"/"+str(pagenum)+"_"+str(counter) + "."+ extension
-                #the following code need to be rewritten in a better way to handle the special characters in the links
-                imagefile = imagefile.strip().replace("(", "\(")
-                imagefile = imagefile.strip().replace(")", "\)")
-                imagefile = imagefile.strip().replace(" ", "\ ")
-                imagefile = imagefile.strip().replace("%2C", ",")
-                imagefile = imagefile.strip().replace("%27", "'")
                 outputfile= outputfile.strip().replace("/", "\/")
-                try:
-                    imagenamefixscript.write("cp " +  path+"\/"+ imagefile + "  " +path  +outputfile+"\n")
-                    imagefile = imagefile.strip().replace("/", "\/")
-                    imagenamefixscript.write("perl -e \"s/"+imagefile+"/"+outputfile+"/g\"  -pi "+ htmlname+"\n" )
-                except:
-                    #TODO : some encoding errors happen in above line. Fix it
-                    pass
+                imagenamefixscript.write(("cp " +  path+"\/"+ imagefile + "  " +path  + outputfile+"\n"))
+                imagefile = imagefile.strip().replace("/", "\/")
+                imagenamefixscript.write("perl -e \"s/"+imagefile+"/"+outputfile+"/g\"  -pi "+ htmlname+"\n" )
+                 
                 counter+=1
     except KeyboardInterrupt:
         sys.exit()
@@ -213,7 +205,7 @@ def grab_image(imageurl, outputfolder):
         parts = link.split("/")    
         filename = parts[len(parts)-1]     
         output_filename =str(outputfolder + "/" + link.replace("http://",""))
-        output_filename=urllib.unquote(output_filename) 
+        #output_filename=urllib.unquote(output_filename) 
         print("GET IMAGE " + link + " ==> " + output_filename)
         if os.path.isfile(output_filename):
             print("File " + output_filename + " already exists")
