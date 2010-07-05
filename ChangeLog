@@ -1,2 +1,7 @@
+Version 0.2 2010-06-12 :
+    * Fix for missing images when image name contains special characters
+    * Remove unwanted sections of the page instead of hiding using css- pyquery used for this purpose
+    * Updated the tool for new vector theme of wikipedia
+    
 Version 0.1 2010-04-14 :
 	* Initial version

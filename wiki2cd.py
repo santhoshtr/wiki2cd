@@ -240,7 +240,7 @@ def cleanup(page):
     unwanted_divs = unwanted_sections_list.split(",")
     for section in unwanted_divs:
         document.remove(section.strip())
-    return document.html().encode("utf-8")
+    return document.wrap('<div></div>').html().encode("utf-8")
     
 if __name__ == '__main__':
     if len(sys.argv)> 2:
